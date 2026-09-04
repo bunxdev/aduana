@@ -1,0 +1,21 @@
+{
+	email {$ACME_EMAIL}
+	admin off
+	http_port 8080
+	https_port 8443
+}
+
+(security_headers) {
+	header {
+		-Server
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+	}
+}
+
+{$SITE_DOMAIN} {
+	import security_headers
+	import tls/{$TLS_MODE:automatic}.caddy
+	encode zstd gzip
+	reverse_proxy {$UPSTREAM}
+}

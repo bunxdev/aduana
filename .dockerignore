@@ -1,0 +1,14 @@
+.git
+.env
+.env.*
+data/
+caddy_data/
+caddy_config/
+build/
+dist/
+coverage/
+tmp/
+*.log
+*.pem
+*.key
+*.crt

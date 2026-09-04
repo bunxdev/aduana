@@ -1,0 +1,39 @@
+name: aduana
+
+services:
+  caddy:
+    image: aduana:${ADUANA_VERSION:-0.0.1}
+    build:
+      context: .
+    user: "1000:1000"
+    restart: unless-stopped
+    ports:
+      - "${BIND_ADDRESS:-127.0.0.1}:${HTTP_PORT:-80}:8080"
+      - "${BIND_ADDRESS:-127.0.0.1}:${HTTPS_PORT:-443}:8443"
+    environment:
+      ACME_EMAIL: ${ACME_EMAIL:-admin@example.com}
+      CF_API_TOKEN: ${CF_API_TOKEN:-}
+      SITE_DOMAIN: ${SITE_DOMAIN:-service.example.com}
+      TLS_MODE: ${TLS_MODE:-automatic}
+      UPSTREAM: ${UPSTREAM:-app:8080}
+    volumes:
+      - ./config:/etc/caddy:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - gateway
+
+networks:
+  gateway:
+    name: aduana_gateway
+
+volumes:
+  caddy_config:
+  caddy_data:
